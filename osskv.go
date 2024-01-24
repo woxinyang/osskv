@@ -491,7 +491,7 @@ func atexit(f func()) {
 		}
 	}()
 }
-func OssKVLogImplementStart(v_iUid, v_iKey, v_iLogType int) {
+func OssKVLogImplementStart(v_iLogType, v_iUid, v_iKey int, str_corpid string) {
 	var iRet int
 	var oRecord clsKvRecord
 	var uHost uint32
@@ -503,14 +503,6 @@ func OssKVLogImplementStart(v_iUid, v_iKey, v_iLogType int) {
 		//fmt.Println("g_iCurrenPid ", g_iCurrenPid)
 		go startKVHelperThread(&strRecordBuffer)
 	}
-	//defer FlushPipeBufWhenExit()
-
-	// g_OssLock.Lock()
-	// defer g_OssLock.Unlock()
-
-	// if g_iCurrenPid == 0 && g_bUseHelperThread {
-	// 	StartKVHelperThread()
-	// }
 	if g_iPipeCleanFlag == 0 {
 		g_iPipeCleanFlag = 1
 		//fmt.Println("g_iPipeCleanFlag", g_iPipeCleanFlag)
@@ -528,11 +520,6 @@ func OssKVLogImplementStart(v_iUid, v_iKey, v_iLogType int) {
 	if pHostIP == "" {
 		uHost = g_uLocalHost
 		//fmt.Println("uHost", uHost)
-	} else {
-		// if pAppName == nil {
-		// 	return 6
-		// }
-		// Oss.IP2Int(*pHostIP, &uHost)
 	}
 
 	if uHost == 0 {
@@ -549,11 +536,11 @@ func OssKVLogImplementStart(v_iUid, v_iKey, v_iLogType int) {
 	oRecord.m_iValueType = uint32(4)
 	oRecord.m_iValueSize = uint32(8)
 	if g_uAutoKeyLogType == oRecord.m_iLogType {
-		oRecord.m_sStringKey = "ww0a7703daabb8c74e1"
+		oRecord.m_sStringKey = str_corpid
 		oRecord.m_iKey = uint32(len(oRecord.m_sStringKey))
 	}
 	b2 := Serialize(&oRecord, m_szBaseName)
-	fmt.Println("oRecord: ", oRecord)
+	//fmt.Println("oRecord: ", oRecord)
 
 	// ckr := Deserialize(b2)
 	// i := len(b2)
